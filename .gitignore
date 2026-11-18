@@ -1,0 +1,54 @@
+# ============================================================
+# 念念读给你 · 服务于识字阅读困难人群的小程序
+# 仓库根 = 小程序项目根，可直接用微信开发者工具打开
+# ============================================================
+
+# ---- 微信开发者工具：个人本地配置（每台机器不同，不共享）----
+project.private.config.json
+
+# ---- 密钥与本地环境配置（切勿入库）----
+.env
+.env.*
+**/.env
+local.properties
+cloudfunctions/**/config.local.json
+
+# ---- 依赖与构建产物 ----
+node_modules/
+**/node_modules/
+miniprogram_npm/
+**/miniprogram_npm/
+__pycache__/
+*.py[cod]
+*.log
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+
+# ---- 素材过程文件（仅本地留档，不纳入版本库）----
+# 说明：这些是图标/logo 迭代中的备份、候选方案、AI 生成原图与对比图，
+#       合计约 4.5 MB（占项目体积约 80%），不是交付物，也不参与构建。
+#       正式头像 assets/logo.png、全部生成脚本 assets/*.py、
+#       以及 miniprogram/images/icons/ 下的正式图标均保留入库。
+assets/*backup*/
+assets/icons_legacy/
+assets/logo_candidate_*.png
+assets/logo_compare*.png
+assets/logo_backup_*.png
+assets/Modern_flat_mobile_app_icon__s_*.png
+assets/图标素材表_*.png
+assets/icons_preview.png
+assets/icons_color_preview.png
+assets/logo_preview_96.png
+
+# ---- 内部资料与本地项目配置（不入库）----
+# docs/：产品设计说明书、备案与审核操作手册等内部资料
+docs/
+# project.config.json 含真实 AppID，模板见 project.config.example.json
+project.config.json
+
+# ---- 本地私有配置（含云环境 ID，绝不入库）----
+miniprogram/config/local.js
+# 废弃页面备份（仅本地留档）
+assets/_unused_guide_*/

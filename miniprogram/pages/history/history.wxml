@@ -1,0 +1,32 @@
+<view class="page">
+
+  <view class="topbar" style="padding-top:{{statusBarHeight}}px;padding-right:{{capsulePad}}px">
+    <button class="topbar__btn" bindtap="goBack"><image class="topbar__ico" src="/images/icons/blue/back.png" />返回</button>
+    <text class="topbar__title">听过的话</text>
+    <button class="topbar__btn topbar__btn--warn" bindtap="onClearAll">清空</button>
+  </view>
+
+  <scroll-view class="list" scroll-y>
+    <view wx:if="{{list.length === 0}}" class="empty">
+      <image class="empty__icon" src="/images/icons/blue/history.png" />
+      <text>还没有听过什么</text>
+      <text>回到首页，粘一段话试试</text>
+    </view>
+
+    <view wx:for="{{list}}" wx:key="id" class="card">
+      <view class="card__main" data-id="{{item.id}}" bindtap="onReplay">
+        <view class="card__head">
+          <image class="card__ico" src="/images/icons/blue/{{item.iconKey}}.png" />
+          <text class="card__time">{{item.time}}</text>
+          <text class="card__count">共 {{item.count}} 句</text>
+        </view>
+        <view class="card__text">{{item.preview}}</view>
+        <view class="card__cta"><image class="btn__icon" src="/images/icons/green/speaker.png" />再念一遍</view>
+      </view>
+      <button class="card__del" data-id="{{item.id}}" bindtap="onRemove"><image class="card__del-ico" src="/images/icons/red/trash.png" /></button>
+    </view>
+
+    <view class="bottom-pad"></view>
+  </scroll-view>
+
+</view>

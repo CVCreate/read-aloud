@@ -1,0 +1,7 @@
+{
+  "name": "ocr",
+  "version": "1.0.0",
+  "description": "图片识字（腾讯云 OCR 通用印刷体高精度版）",
+  "main": "index.js",
+  "dependencies": {}
+}

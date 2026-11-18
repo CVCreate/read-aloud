@@ -1,0 +1,125 @@
+<view class="page">
+
+  <!-- 顶部：历史 / 说明 / 设置 -->
+  <view class="topbar" id="rowTop" style="padding-top:{{statusBarHeight}}px;padding-right:{{capsulePad}}px">
+    <button class="topbar__btn" id="btnHistory" bindtap="goHistory"><image class="topbar__ico" src="/images/icons/blue/history.png" />历史</button>
+    <!-- 中间按钮复用 .topbar__btn：自造的 flex:1 样式会被 button 默认 width:184px
+         搞出渲染异常（整块不可见），已验证正常的类直接复用最稳 -->
+    <button class="topbar__btn" id="btnGuide" bindtap="onReplayGuide"><image class="topbar__ico" src="/images/icons/blue/book.png" />说明</button>
+    <button class="topbar__btn" id="btnSettings" bindtap="goSettings"><image class="topbar__ico" src="/images/icons/blue/gear.png" />设置</button>
+  </view>
+
+  <!-- 状态横幅 -->
+  <view wx:if="{{banner}}" class="banner">{{banner}}</view>
+
+  <!-- 剪贴板提示：进来看见就直接问，不用老人想 -->
+  <view wx:if="{{clipHint}}" class="clip">
+    <view class="clip__t">检测到一段话，要我念给您听吗？</view>
+    <view class="clip__p">{{clipText}}</view>
+    <view class="clip__row">
+      <button class="btn btn--go clip__btn" bindtap="onClipRead"><image class="btn__icon" src="/images/icons/white/speaker.png" />念</button>
+      <button class="btn clip__btn" bindtap="onClipDismiss">不用</button>
+    </view>
+  </view>
+
+  <!-- 识字结果：念得不对照样能看出问题，拍糊了直接重来 -->
+  <view wx:if="{{ocrBox}}" class="ocrbox">
+    <view class="ocrbox__t">认出来了</view>
+    <view class="ocrbox__p">{{ocrBox}}</view>
+    <view class="ocrbox__row">
+      <button class="btn ocrbox__btn" data-src="camera" bindtap="onOcr"><image class="btn__icon" src="/images/icons/blue/redo.png" />重拍</button>
+      <button class="btn ocrbox__btn" data-src="album" bindtap="onOcr"><image class="btn__icon" src="/images/icons/blue/image.png" />换一张</button>
+      <button class="btn ocrbox__btn" bindtap="onOcrClose">知道了</button>
+    </view>
+  </view>
+
+  <!-- 朗读区：超大字，正在念的句子高亮 -->
+  <!-- curIndex 为 -1（未朗读/已停止）时不能传 "s-1"，
+       否则 scroll-view 每帧都在找一个不存在的锚点，白耗一次滚动计算 -->
+  <!-- 边框交给外层 view：scroll-view 的盒模型在小程序里不可靠
+       （padding/border 会加在 flex 分配的尺寸之外），让它只负责滚动 -->
+  <view class="readerbox" id="rowReader">
+    <scroll-view class="reader" scroll-y scroll-into-view="{{curIndex >= 0 ? 's' + curIndex : ''}}" scroll-with-animation>
+        <view class="reader__inner" style="font-size:{{fontSize}}rpx;line-height:{{fontSize * 1.6}}rpx">
+          <block wx:if="{{sentences.length}}">
+            <text
+              wx:for="{{sentences}}"
+              wx:key="index"
+              id="s{{index}}"
+              class="seg {{index === curIndex ? 'is-cur' : ''}}"
+              data-i="{{index}}"
+              bindtap="onSegTap"
+            >{{item}}</text>
+          </block>
+          <view wx:else class="reader__empty">
+            <image class="reader__empty-ico" src="/images/icons/blue/doc.png" />
+            <text class="reader__empty-t">把别人发来的话粘进来</text>
+            <text class="reader__empty-t">或者拍张照片</text>
+            <text class="reader__empty-t">我念给您听</text>
+          </view>
+        </view>
+    </scroll-view>
+  </view>
+
+  <!-- 控制区 -->
+  <view class="ctrl">
+
+    <button
+      id="btnMain"
+      class="main {{status === 'playing' || status === 'loading' ? 'is-stop' : ''}}"
+      bindtap="onMainTap"
+      hover-class="{{status === 'playing' || status === 'loading' ? 'main--hover-stop' : 'main--hover'}}"
+      hover-stay-time="80"
+    >
+      <image class="main__ico" src="{{status === 'playing' || status === 'loading' ? '/images/icons/white/stop.png' : '/images/icons/white/speaker.png'}}" />
+      <text class="main__t">{{status === 'playing' || status === 'loading' ? '停止' : '念给我听'}}</text>
+    </button>
+
+    <!-- 句控制：常驻显示，没在念时置灰禁用。
+         以前是播放时才出现，控制区会突然长高约 104rpx，
+         中间的朗读区跟着缩一下 —— 老人看着像「界面跳了一下」。
+         常驻后高度恒定，顺便让老人提前知道有这些按钮 -->
+    <view class="ctrl__row" id="rowCtrl">
+      <button class="btn subbtn {{active ? '' : 'is-off'}}" id="btnPrev" bindtap="onPrev"><image class="btn__icon" src="/images/icons/green/prev.png" />上一句</button>
+      <button class="btn subbtn {{active ? '' : 'is-off'}}" id="btnPause" bindtap="onTogglePlay"><image class="btn__icon" src="{{status === 'paused' ? '/images/icons/green/play.png' : '/images/icons/green/pause.png'}}" />{{status === 'paused' ? '继续' : '暂停'}}</button>
+      <button class="btn subbtn {{active ? '' : 'is-off'}}" id="btnNext" bindtap="onNext">下一句<image class="btn__icon" src="/images/icons/green/next.png" /></button>
+    </view>
+
+    <!-- 输入入口：图标 + 极短文字，不识字也能认 -->
+    <view class="ctrl__row">
+      <button class="btn entry" id="btnPaste" bindtap="onPaste"><image class="btn__icon" src="/images/icons/blue/paste.png" />粘贴</button>
+      <button class="btn entry" id="btnOcr" bindtap="onOcr"><image class="btn__icon" src="/images/icons/blue/camera.png" />照片识字</button>
+      <button wx:if="{{canAsr}}" class="btn entry {{recording ? 'is-rec' : ''}}" bindtap="onAsr"><image class="btn__icon" src="/images/icons/green/mic.png" />{{recording ? '说完了' : '说话'}}</button>
+    </view>
+
+    <!-- 语速 -->
+    <view class="ctrl__row speed" id="rowSpeed">
+      <text class="speed__lab">语速</text>
+      <button
+        wx:for="{{speedLevels}}"
+        wx:key="key"
+        id="sp-{{item.key}}"
+        class="btn speedbtn {{speed === item.key ? 'is-on' : ''}}"
+        data-key="{{item.key}}"
+        bindtap="onSpeed"
+      >{{item.label}}</button>
+    </view>
+
+  </view>
+
+  <!-- 新手引导：在真实界面上逐个高亮讲解。
+       首次进入自动开始；点「说明」也会再来一遍；点任意处 = 下一步；可跳过。
+       非首次使用且没点说明时，这层完全不渲染 -->
+  <view wx:if="{{coach.active}}" class="coach" catchtap="onCoachNext">
+    <view class="coach__ring" style="{{coach.ring}}"></view>
+    <view class="coach__tip" style="{{coach.tip}}" catchtap="onCoachNext">
+      <view class="coach__t">{{coach.title}}</view>
+      <view class="coach__d">{{coach.desc}}</view>
+      <view class="coach__row">
+        <view class="coach__skip" catchtap="onCoachSkip">跳过</view>
+        <view class="coach__next">{{coach.idx + 1 === coach.total ? '知道了，开始用' : '下一步'}}</view>
+      </view>
+    </view>
+  </view>
+
+</view>

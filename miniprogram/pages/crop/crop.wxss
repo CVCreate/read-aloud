@@ -1,0 +1,203 @@
+/* pages/crop/crop.wxss —— 框选识别（无障碍：大框、大角、大按钮） */
+page {
+  height: 100%;
+}
+.page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: #F5F7FA;
+}
+
+/* 顶部说明：字要大，老人不费眼；右侧常驻「听说明」可随时重听引导 */
+.tips {
+  flex: none;
+  display: flex;
+  align-items: center;
+  padding: 20rpx 24rpx;
+  background: #FFFDF5;
+  border-bottom: 2rpx solid #E6E9EF;
+}
+.tips__l {
+  flex: 1;
+  min-width: 0;
+}
+.tips__t {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: #1F2933;
+}
+.tips__d {
+  margin-top: 8rpx;
+  font-size: 30rpx;
+  line-height: 1.6;
+  color: #6B7684;
+}
+/* 双类选择器：压住微信 button 默认的 width:184px */
+.tips .tips__btn {
+  flex: none;
+  width: 200rpx;
+  min-height: 84rpx;
+  margin: 0 0 0 16rpx;
+  padding: 0 8rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #1B5FA8;
+  background: #EAF3FD;
+  border: 2rpx solid #BBD7F5;
+  border-radius: 18rpx;
+  line-height: 1.3;
+  box-sizing: border-box;
+}
+.tips__ico {
+  width: 32rpx;
+  height: 32rpx;
+  margin-right: 8rpx;
+  flex: none;
+}
+
+/* 舞台：图片 + 选区 */
+.stage {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  background: #10171F;
+  overflow: hidden;
+}
+.stage__img {
+  width: 100%;
+  height: 100%;
+}
+
+/* 选区框：粗绿边，四周自动变暗（无限大阴影，比叠 4 块半透明省事） */
+.sel {
+  position: absolute;
+  border: 6rpx solid #2FCE8F;
+  box-shadow: 0 0 0 2000px rgba(8, 16, 13, 0.55);
+  box-sizing: border-box;
+}
+/* 四角抓手：做得大一点，手指能点中 */
+.sel__h {
+  position: absolute;
+  width: 44rpx;
+  height: 44rpx;
+  background: #2FCE8F;
+  border-radius: 10rpx;
+}
+.sel__h--nw { left: -22rpx; top: -22rpx; }
+.sel__h--ne { right: -22rpx; top: -22rpx; }
+.sel__h--sw { left: -22rpx; bottom: -22rpx; }
+.sel__h--se { right: -22rpx; bottom: -22rpx; }
+
+/* 离屏画布：移出屏幕，不能 display:none */
+.cvoff {
+  position: fixed;
+  top: 0;
+  left: -6000px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* 底部按钮：取消/整张都要/就认这块 三颗，按百分比定宽 + space-between 撑出明显间隙。
+   注意：微信 button 默认样式 button:not([size='mini']) 有 width:184px，
+   单个类选择器(0,1,0)压不过它(0,1,1)，所以下面一律用 .foot .xxx 双类(0,2,0)写宽度。 */
+.foot {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24rpx 24rpx calc(24rpx + env(safe-area-inset-bottom));
+  background: #FFFDF5;
+  border-top: 2rpx solid #E6E9EF;
+}
+.foot .btnft {
+  flex: none;                 /* 不许被默认 184px 拉伸，宽度完全由下面百分比说了算 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 112rpx;
+  padding: 0 4rpx;
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #1F2933;
+  background: #F1F3F7;
+  border: 2rpx solid #D9DEE6;
+  border-radius: 20rpx;
+  line-height: 1.35;
+  box-sizing: border-box;
+}
+.foot .btnft--cxl { width: 22%; }   /* 取消：两个字，最窄 */
+.foot .btnft--all { width: 34%; }   /* 整张都要：四个字 */
+.foot .btnft--go {
+  width: 34%;
+  color: #FFFFFF;
+  background: #2FCE8F;
+  border-color: #16A874;
+}
+.btnft__ico {
+  width: 34rpx;
+  height: 34rpx;
+  margin-right: 8rpx;
+  flex: none;
+}
+.btnft__ico--lg {
+  width: 40rpx;
+  height: 40rpx;
+  margin-right: 10rpx;
+}
+
+/* ============ 首次使用引导（与首页同款遮罩高亮） ============ */
+.coach {
+  position: fixed;
+  left: 0; top: 0; right: 0; bottom: 0;
+  z-index: 2000;
+}
+.coach__ring {
+  position: fixed;
+  border-radius: 24rpx;
+  border: 4rpx solid #7BD8C0;
+  box-sizing: content-box;
+  box-shadow: 0 0 0 3000px rgba(12, 32, 27, 0.66);
+}
+.coach__tip {
+  position: fixed;
+  background: #FFFFFF;
+  border-radius: 24rpx;
+  padding: 26rpx 28rpx;
+  box-shadow: 0 10rpx 34rpx rgba(0, 0, 0, 0.28);
+  z-index: 2001;
+}
+.coach__t {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: #1F2933;
+  line-height: 1.4;
+}
+.coach__d {
+  margin-top: 10rpx;
+  font-size: 34rpx;
+  line-height: 1.7;
+  color: #6B7684;
+}
+.coach__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 24rpx;
+}
+.coach__skip {
+  font-size: 32rpx;
+  color: #98A2AE;
+  padding: 12rpx 10rpx;
+}
+.coach__next {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #FFFFFF;
+  background: #2FCE8F;
+  border-radius: 999rpx;
+  padding: 16rpx 44rpx;
+}

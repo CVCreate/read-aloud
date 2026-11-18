@@ -1,0 +1,57 @@
+<view class="page">
+
+  <view class="tips">
+    <view class="tips__l">
+      <view class="tips__t">把要念的字框出来</view>
+      <view class="tips__d">手指拖绿框挪位置，拖四个角改大小</view>
+    </view>
+    <!-- 忘了怎么用：随时点这里重听一遍（首次进页面会自动讲，之后靠这个按钮） -->
+    <button class="tips__btn" bindtap="onReplayCoach"><image class="tips__ico" src="/images/icons/blue/book.png" />听说明</button>
+  </view>
+
+  <!-- 选区舞台：整块都是触摸区，拖框move/拖角resize -->
+  <view
+    class="stage"
+    id="stage"
+    bindtouchstart="onTStart"
+    bindtouchmove="onTMove"
+    bindtouchend="onTEnd"
+    bindtouchcancel="onTEnd"
+  >
+    <image class="stage__img" src="{{imgSrc}}" mode="aspectFit" />
+
+    <view
+      wx:if="{{ready && box.w > 0}}"
+      class="sel"
+      style="left:{{box.x}}px;top:{{box.y}}px;width:{{box.w}}px;height:{{box.h}}px"
+    >
+      <view class="sel__h sel__h--nw" data-mode="nw" />
+      <view class="sel__h sel__h--ne" data-mode="ne" />
+      <view class="sel__h sel__h--sw" data-mode="sw" />
+      <view class="sel__h sel__h--se" data-mode="se" />
+    </view>
+  </view>
+
+  <!-- 离屏画布：只用来导出裁剪结果，不显示（不能用 display:none，2d canvas 会失效） -->
+  <canvas class="cvoff" type="2d" id="cv" style="width:{{cvW}}px;height:{{cvH}}px"></canvas>
+
+  <view class="foot" id="foot">
+    <button class="btnft btnft--cxl" id="btnCancel" bindtap="onCancel"><image class="btnft__ico" src="/images/icons/red/close.png" />取消</button>
+    <button class="btnft btnft--all" id="btnAll" bindtap="onWhole"><image class="btnft__ico" src="/images/icons/blue/image.png" />整张都要</button>
+    <button class="btnft btnft--go" id="btnGo" bindtap="onConfirm"><image class="btnft__ico btnft__ico--lg" src="/images/icons/white/speaker.png" />就认这块</button>
+  </view>
+
+  <!-- 首次使用引导：高亮真实元素逐步讲，点任意处推进，可跳过；看过一次就不再出现 -->
+  <view wx:if="{{coach.active}}" class="coach" catchtap="onCoachNext">
+    <view class="coach__ring" style="{{coach.ring}}"></view>
+    <view class="coach__tip" style="{{coach.tip}}" catchtap="onCoachNext">
+      <view class="coach__t">{{coach.title}}</view>
+      <view class="coach__d">{{coach.desc}}</view>
+      <view class="coach__row">
+        <view class="coach__skip" catchtap="onCoachSkip">跳过</view>
+        <view class="coach__next">{{coach.idx + 1 === coach.total ? '知道了，开始用' : '下一步'}}</view>
+      </view>
+    </view>
+  </view>
+
+</view>

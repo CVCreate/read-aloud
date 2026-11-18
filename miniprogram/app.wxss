@@ -1,0 +1,158 @@
+/* app.wxss —— 无障碍全局样式系统 */
+page {
+  /* 高对比度配色：暖白底 + 近黑字，避免眩光与浅灰 */
+  --bg: #FFFDF5;
+  --card: #FFFFFF;
+  --ink: #1A1A1A;
+  --ink-2: #4A4A4A;
+  --line: #3A3A3A;
+  /* 行动色：绿 = 开始，红 = 停止 */
+  --go: #1B8A2E;
+  --go-dark: #146222;
+  --stop: #D32F2F;
+  --stop-dark: #9B1C1C;
+  /* 辅助色 */
+  --accent: #1565C0;
+  --highlight: #FFD54F;
+  --chip: #EFE7D6;
+
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 30rpx;
+  line-height: 1.7;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* scroll-view 必须单独列出：上面的 view 选择器匹配不到 <scroll-view> 标签。
+   2026-10-13 踩坑：首页朗读区是 scroll-view + flex:1 + padding/border，
+   默认 content-box 下内边距和边框会加在 flex 分配的宽度之外，
+   把右侧整体挤出屏幕 —— 表现为「黑框右边少了一条」。 */
+view, text, button, textarea, input, scroll-view {
+  box-sizing: border-box;
+  font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+/* 所有按钮去默认样式 */
+button {
+  padding: 0;
+  margin: 0;
+  line-height: normal;
+  background: transparent;
+  color: var(--ink);
+  font-size: inherit;
+  border-radius: 0;
+}
+button::after {
+  border: none;
+}
+/* 微信默认 button:not([size='mini']) 的 line-height:2.55 优先级(0,1,1)
+   高于上面的 button(0,0,1)，一直没被压住 → 文字在按钮里垂直偏上
+   （引导页「跳过 / 下一步」最明显）。这里用 page 前缀提一级压掉。 */
+page button:not([size='mini']) {
+  line-height: 1.45;
+}
+
+/* 微信 button 默认 hover-class="button-hover"（rgba(0,0,0,.1) 灰罩）
+   会和下面各页自己的 :active 背景叠加，真机上表现为「闪一下又变一下」。
+   这里把它压到 6% 透明度，反馈保留但不再闪烁。 */
+.button-hover {
+  background-color: rgba(0, 0, 0, 0.06);
+}
+
+/* ============ 通用大按钮 ============ */
+/* 最小高度 96rpx，边框加粗，圆角大 —— 手抖也点得中 */
+.btn {
+  min-height: 88rpx;
+  padding: 0 28rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 4rpx solid var(--line);
+  border-radius: 24rpx;
+  background: var(--card);
+  font-size: 30rpx;
+  font-weight: 700;
+  color: var(--ink);
+  /* 去掉 transform 过渡。
+     真机表现是「点一下整个页面抖一下」——按钮缩放 + 微信默认灰罩
+     两个效果叠加，老屏低端机上还会掉帧。改成只变背景色，反馈依然明确 */
+  transition: background .1s ease;
+}
+.btn:active {
+  background: var(--chip);
+}
+.btn--go {
+  background: var(--go);
+  border-color: var(--go-dark);
+  color: #FFFFFF;
+}
+.btn--go:active {
+  background: var(--go-dark);
+}
+.btn--stop {
+  background: var(--stop);
+  border-color: var(--stop-dark);
+  color: #FFFFFF;
+}
+.btn--stop:active {
+  background: var(--stop-dark);
+}
+.btn--ghost {
+  background: var(--card);
+}
+.btn[disabled] {
+  opacity: .45;
+}
+
+/* 按钮内的图标（统一 PNG 图标，粗线条单色，年轻化风格） */
+.btn__icon {
+  width: 44rpx;
+  height: 44rpx;
+  margin-right: 14rpx;
+  flex: none;
+}
+
+/* ============ 布局 ============ */
+/* 微信 button 默认 width:184px（button:not([size='mini'])，优先级 0,1,1），
+   单类名 .topbar__btn(0,1,0) 压不过它 → 顶栏按钮实际渲染 184px 宽，
+   两个按钮就把顶栏撑爆（设置被挤出屏幕、压到微信胶囊）。
+   用 .topbar .topbar__btn(0,2,0) 提优先级压回内容宽。
+   2026-10-13：之前顶栏只有两个按钮时就有此问题，加了第三个按钮后彻底爆掉。 */
+.topbar .topbar__btn {
+  width: auto;
+  min-width: 116rpx;
+}
+.wrap {
+  padding: 24rpx 28rpx 60rpx;
+}
+.row {
+  display: flex;
+  align-items: center;
+}
+.gap {
+  height: 24rpx;
+}
+
+/* ============ 提示条 ============ */
+.tip {
+  padding: 20rpx 24rpx;
+  border-radius: 20rpx;
+  background: var(--chip);
+  border: 3rpx solid var(--line);
+  font-size: 28rpx;
+  color: var(--ink);
+}
+
+/* ============ 空状态 ============ */
+.empty {
+  padding: 120rpx 40rpx;
+  text-align: center;
+  color: var(--ink-2);
+  font-size: 30rpx;
+}
+.empty__icon {
+  width: 120rpx;
+  height: 120rpx;
+  display: block;
+  margin: 0 auto 24rpx;
+}

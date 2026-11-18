@@ -1,0 +1,202 @@
+.page {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+}
+
+.topbar {
+  flex: none;
+  padding: 0 24rpx;
+  height: 96rpx;
+  box-sizing: content-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 3rpx solid var(--line);
+  background: var(--card);
+}
+.topbar__btn {
+  min-width: 132rpx;
+  height: 68rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+  font-weight: 700;
+  border: 3rpx solid var(--line);
+  border-radius: 18rpx;
+  background: var(--card);
+}
+.topbar__btn:active { background: var(--chip); }
+.topbar__btn--plain { border-color: transparent; }
+.topbar__ico { width: 36rpx; height: 36rpx; margin: 0 8rpx; flex: none; }
+.topbar__title {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  font-size: 32rpx;
+  font-weight: 800;
+  color: var(--ink);
+}
+.topbar__btn { flex: none; }
+
+.body {
+  flex: 1;
+  min-height: 0;
+  padding: 24rpx;
+}
+
+.grp {
+  margin-bottom: 28rpx;
+  padding: 22rpx 24rpx;
+  background: var(--card);
+  border: 4rpx solid var(--line);
+  border-radius: 24rpx;
+}
+.grp__t {
+  font-size: 32rpx;
+  font-weight: 800;
+  color: var(--ink);
+  margin-bottom: 18rpx;
+}
+.grp__ico { width: 40rpx; height: 40rpx; margin-right: 10rpx; flex: none; }
+.grp__row {
+  display: flex;
+}
+.grp__row .btn { flex: 1; }
+.grp__row .btn + .btn { margin-left: 14rpx; }
+.grp__col .btn { width: 100%; }
+.grp__col .btn + .btn { margin-top: 14rpx; }
+
+.grp__hint {
+  margin-top: 14rpx;
+  font-size: 26rpx;
+  color: var(--ink-2);
+  line-height: 1.6;
+}
+.grp__hint-b { font-weight: 800; color: var(--ink); }
+
+.opt {
+  min-height: 88rpx;
+  font-size: 30rpx;
+}
+.opt.is-on {
+  background: var(--accent);
+  border-color: #0D47A1;
+  color: #FFFFFF;
+}
+
+.voice {
+  min-height: 100rpx;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 14rpx 24rpx;
+}
+.voice__l { font-size: 30rpx; font-weight: 800; }
+.voice__d { font-size: 24rpx; color: var(--ink-2); margin-top: 4rpx; }
+.voice.is-on { background: var(--accent); border-color: #0D47A1; }
+.voice.is-on .voice__l, .voice.is-on .voice__d { color: #FFFFFF; }
+
+.stat {
+  border-top: 3rpx solid var(--chip);
+  padding-top: 12rpx;
+}
+.stat__row {
+  display: flex;
+  align-items: center;
+  padding: 10rpx 0;
+}
+.stat__k {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: var(--ink);
+}
+.stat__v {
+  margin-left: auto;
+  font-size: 28rpx;
+  font-weight: 800;
+}
+.stat__v.ok { color: var(--go-dark); }
+.stat__v.bad { color: var(--stop); }
+
+.info {
+  width: 100%;
+  min-height: 96rpx;
+  font-size: 30rpx;
+  margin-bottom: 20rpx;
+}
+
+/* 用自己的声音：给子女配置的入口，做醒目一点但不抢主按钮 */
+.custom {
+  width: 100%;
+  min-height: 96rpx;
+  font-size: 30rpx;
+  font-weight: 700;
+  color: var(--go-dark);
+  border-color: var(--go);
+  background: var(--highlight);
+}
+
+.danger {
+  width: 100%;
+  min-height: 96rpx;
+  font-size: 30rpx;
+  color: var(--stop);
+  border-color: var(--stop);
+}
+
+/* 底部安全区补偿：全面屏机型的手势条会盖住「清空听过的记录」 */
+.bottom-pad {
+  height: 40rpx;
+  height: calc(40rpx + constant(safe-area-inset-bottom));
+  height: calc(40rpx + env(safe-area-inset-bottom));
+}
+
+/* 声音自检结果：等宽感的行列，方便照着抄给帮忙配置的人 */
+.chk {
+  margin: 16rpx 0 8rpx;
+  padding: 24rpx 26rpx;
+  background: var(--chip);
+  border: 3rpx solid var(--line);
+  border-radius: 20rpx;
+}
+.chk__l {
+  display: block;
+  font-size: 26rpx;
+  font-weight: 700;
+  line-height: 1.9;
+  color: var(--ink);
+  word-break: break-all;
+}
+.chk__btn {
+  margin-top: 18rpx;
+  min-height: 80rpx;
+  font-size: 28rpx;
+}
+
+/* 调试模式提示条：提醒开发者正式发布前把隐私校验改回 true */
+.dbg {
+  margin: 16rpx 0 8rpx;
+  padding: 22rpx 26rpx;
+  background: var(--warn-bg, #FFF4E5);
+  border: 3rpx solid var(--warn, #E07B00);
+  border-radius: 20rpx;
+}
+.dbg__t {
+  display: block;
+  font-size: 30rpx;
+  font-weight: 700;
+  color: var(--warn, #E07B00);
+  line-height: 1.7;
+}
+.dbg__d {
+  display: block;
+  margin-top: 6rpx;
+  font-size: 26rpx;
+  line-height: 1.7;
+  color: var(--ink);
+  word-break: break-all;
+}

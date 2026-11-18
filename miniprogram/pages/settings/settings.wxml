@@ -1,0 +1,143 @@
+<view class="page">
+
+  <view class="topbar" style="padding-top:{{statusBarHeight}}px;padding-right:{{capsulePad}}px">
+    <button class="topbar__btn" bindtap="goBack"><image class="topbar__ico" src="/images/icons/blue/back.png" />返回</button>
+    <text class="topbar__title">设置</text>
+    <view class="topbar__btn topbar__btn--plain"></view>
+  </view>
+
+  <scroll-view class="body" scroll-y>
+
+    <!-- 语速 -->
+    <view class="grp">
+      <view class="grp__t"><image class="grp__ico" src="/images/icons/green/speed.png" />念的速度</view>
+      <view class="grp__row">
+        <button
+          wx:for="{{speedLevels}}"
+          wx:key="key"
+          class="btn opt {{speed === item.key ? 'is-on' : ''}}"
+          data-key="speed"
+          data-val="{{item.key}}"
+          bindtap="pick"
+        >{{item.label}}</button>
+      </view>
+    </view>
+
+    <!-- 字号 -->
+    <view class="grp">
+      <view class="grp__t"><image class="grp__ico" src="/images/icons/blue/font.png" />字的大小</view>
+      <view class="grp__row">
+        <button
+          wx:for="{{fontLevels}}"
+          wx:key="key"
+          class="btn opt {{fontSize === item.key ? 'is-on' : ''}}"
+          data-key="fontSize"
+          data-val="{{item.key}}"
+          bindtap="pick"
+        >{{item.label}}</button>
+      </view>
+    </view>
+
+    <!-- 朗读时不息屏 -->
+    <view class="grp">
+      <view class="grp__t"><image class="grp__ico" src="/images/icons/blue/sun.png" />念的时候不熄屏</view>
+      <view class="grp__row">
+        <button class="btn opt {{keepScreenOn ? 'is-on' : ''}}" data-key="keepScreenOn" data-val="1" bindtap="pickBool">开</button>
+        <button class="btn opt {{!keepScreenOn ? 'is-on' : ''}}" data-key="keepScreenOn" data-val="0" bindtap="pickBool">关</button>
+      </view>
+    </view>
+
+    <!-- 进来看剪贴板 -->
+    <view class="grp">
+      <view class="grp__t"><image class="grp__ico" src="/images/icons/blue/paste.png" />打开就问我要不要念</view>
+      <view class="grp__row">
+        <button class="btn opt {{autoReadClipboard ? 'is-on' : ''}}" data-key="autoReadClipboard" data-val="1" bindtap="pickBool">开</button>
+        <button class="btn opt {{!autoReadClipboard ? 'is-on' : ''}}" data-key="autoReadClipboard" data-val="0" bindtap="pickBool">关</button>
+      </view>
+      <view class="grp__hint">关掉以后，要自己点「粘贴」才会念</view>
+    </view>
+
+    <!-- 点击振动：默认关，真机实测老人嫌「手机发抖」 -->
+    <view class="grp">
+      <view class="grp__t"><image class="grp__ico" src="/images/icons/blue/wave.png" />点的时候手机振动</view>
+      <view class="grp__row">
+        <button class="btn opt {{haptic ? 'is-on' : ''}}" data-key="haptic" data-val="1" bindtap="pickBool">开</button>
+        <button class="btn opt {{!haptic ? 'is-on' : ''}}" data-key="haptic" data-val="0" bindtap="pickBool">关</button>
+      </view>
+      <view class="grp__hint">关掉更安静。会不会点中，看按钮变色和听声音就知道</view>
+    </view>
+
+    <!-- 音色（仅云端可用） -->
+    <view class="grp">
+      <view class="grp__t"><image class="grp__ico" src="/images/icons/green/talk.png" />念的声音</view>
+      <view wx:if="{{cloudOk}}" class="grp__col">
+        <button
+          wx:for="{{voiceTypes}}"
+          wx:key="key"
+          class="btn voice {{voiceType === item.key ? 'is-on' : ''}}"
+          data-key="voiceType"
+          data-val="{{item.key}}"
+          bindtap="pickNum"
+        >
+          <text class="voice__l">{{item.label}}</text>
+          <text class="voice__d">{{item.desc}}</text>
+        </button>
+      </view>
+      <view wx:else class="grp__hint">
+        换声音需要先开通云函数（见说明文档）。<text class="grp__hint-b">现在用的是系统默认声音。</text>
+      </view>
+
+      <!-- 用自己的声音：子女在腾讯云复刻好自己的声线后，把音色 ID 填进来 -->
+      <view class="grp__row">
+        <button class="btn custom" bindtap="onCustomVoice"><image class="btn__icon" src="/images/icons/green/studio.png" />用我自己的声音</button>
+      </view>
+      <view class="grp__hint">
+        先在腾讯云做「声音复刻」，拿到一串音色 ID，填进来就是用你的声音念。
+        <text class="grp__hint-b">当前音色 ID：{{voiceType}}</text>
+      </view>
+    </view>
+
+    <!-- 状态 -->
+    <view class="grp">
+      <view class="grp__t"><image class="grp__ico" src="/images/icons/green/pulse.png" />功能状态</view>
+      <view class="stat">
+        <view class="stat__row">
+          <text class="stat__k">朗读引擎</text>
+          <text class="stat__v ok">云端朗读</text>
+        </view>
+        <view class="stat__row">
+          <text class="stat__k">云开发（识字/换声音）</text>
+          <text class="stat__v {{cloudOk ? 'ok' : 'bad'}}">{{cloudOk ? '正常' : '未开通'}}</text>
+        </view>
+      </view>
+
+      <view wx:if="{{!cloudOk}}" class="grp__hint">
+        云开发没开通，拍照识字和换声音都用不了，
+        但<text class="grp__hint-b">粘贴文字朗读不受影响</text>。
+        需要用这两项的话：开发者工具左上角点「云开发」开通，
+        再右键 cloudfunctions 下的 tts / ocr 上传部署。
+      </view>
+    </view>
+
+    <view wx:if="{{!privacyCheck}}" class="dbg">
+      <text class="dbg__t">调试模式：隐私校验已关闭</text>
+      <text class="dbg__d">现在可以真机实测「粘贴文字」「拍照识字」「语音输入」。正式发布前，把 app.json 的 __usePrivacyCheck__ 和 config/index.js 的 privacyCheck 改回 true。</text>
+    </view>
+
+    <button class="btn info" bindtap="onAudioCheck"><image class="btn__icon" src="/images/icons/green/pulse.png" />检查声音（看不到声音时用）</button>
+
+    <view wx:if="{{checkLines.length}}" class="chk">
+      <text wx:for="{{checkLines}}" wx:key="*this" class="chk__l">{{item}}</text>
+      <button class="btn chk__btn" bindtap="onCopyCheck"><image class="btn__icon" src="/images/icons/blue/paste.png" />复制检查结果</button>
+    </view>
+
+    <button class="btn info" bindtap="onReplayGuide"><image class="btn__icon" src="/images/icons/blue/book.png" />重新看一遍使用说明</button>
+
+    <button class="btn info" bindtap="onOpenPrivacy"><image class="btn__icon" src="/images/icons/blue/lock.png" />查看隐私保护指引</button>
+
+    <button class="btn danger" bindtap="onClearHistory"><image class="btn__icon" src="/images/icons/red/trash.png" />清空听过的记录</button>
+
+    <view class="bottom-pad"></view>
+  </scroll-view>
+
+</view>

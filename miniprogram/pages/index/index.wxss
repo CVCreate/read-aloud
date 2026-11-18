@@ -1,0 +1,338 @@
+.page {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+}
+
+/* ============ 顶部栏 ============ */
+.topbar {
+  flex: none;
+  padding: 0 24rpx;
+  height: 96rpx;
+  box-sizing: content-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 3rpx solid var(--line);
+  background: var(--card);
+}
+.topbar__btn {
+  min-width: 132rpx;
+  height: 68rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+  font-weight: 700;
+  border: 3rpx solid var(--line);
+  border-radius: 18rpx;
+  background: var(--card);
+}
+.topbar__btn:active { background: var(--chip); }
+.topbar__ico { width: 40rpx; height: 40rpx; margin: 0 8rpx; flex: none; }
+/* 顶栏三个按钮等宽等样式，space-between 自动均匀分布、中间按钮精确居中 */
+.topbar__btn { flex: none; }
+
+/* 首页三按钮等宽 + 统一间距：
+   图标全部在文字左侧（「设置」原来图标在右，观感不齐），按钮宽度一致 */
+.topbar .topbar__btn {
+  flex: 1;
+  min-width: 0;
+}
+.topbar__btn + .topbar__btn {
+  margin-left: 14rpx;
+}
+
+/* ============ 状态横幅 ============ */
+.banner {
+  flex: none;
+  padding: 16rpx 28rpx;
+  background: var(--highlight);
+  color: #000;
+  font-size: 28rpx;
+  font-weight: 700;
+  border-bottom: 3rpx solid var(--line);
+}
+
+/* ============ 剪贴板提示 ============ */
+.clip {
+  flex: none;
+  margin: 20rpx 24rpx 0;
+  padding: 24rpx;
+  background: var(--card);
+  border: 5rpx solid var(--go);
+  border-radius: 24rpx;
+}
+.clip__t {
+  font-size: 34rpx;
+  font-weight: 800;
+  color: var(--ink);
+}
+.clip__p {
+  margin-top: 12rpx;
+  font-size: 28rpx;
+  color: var(--ink-2);
+  line-height: 1.6;
+}
+.clip__row {
+  margin-top: 20rpx;
+  display: flex;
+}
+.clip__btn {
+  flex: 1;
+  height: 96rpx;
+}
+.clip__btn:first-child { margin-right: 16rpx; }
+
+/* ============ 识字结果卡 ============ */
+.ocrbox {
+  flex: none;
+  margin: 20rpx 24rpx 0;
+  padding: 24rpx;
+  background: var(--card);
+  border: 5rpx solid var(--line);
+  border-radius: 24rpx;
+}
+.ocrbox__t {
+  font-size: 30rpx;
+  font-weight: 800;
+  color: var(--ink-2);
+}
+.ocrbox__p {
+  margin-top: 12rpx;
+  font-size: 30rpx;
+  color: var(--ink);
+  line-height: 1.6;
+  max-height: 160rpx;
+  overflow: hidden;
+}
+.ocrbox__row {
+  margin-top: 20rpx;
+  display: flex;
+}
+.ocrbox__btn {
+  flex: 1;
+  height: 88rpx;
+  font-size: 30rpx;
+}
+.ocrbox__btn + .ocrbox__btn { margin-left: 12rpx; }
+
+/* ============ 朗读区 ============ */
+/* 边框/圆角/背景放在外层 view 上（view 有 border-box，尺寸计算可靠），
+   scroll-view 只负责滚动、不碰 margin/padding/border，避免盒模型溢出 */
+.readerbox {
+  flex: 1;
+  min-height: 0;
+  margin: 20rpx 24rpx;
+  background: var(--card);
+  border: 4rpx solid var(--line);
+  border-radius: 24rpx;
+  overflow: hidden;
+}
+.reader {
+  width: 100%;
+  height: 100%;
+}
+.reader__inner {
+  padding: 24rpx 24rpx 64rpx;
+}
+.seg {
+  display: inline;
+  color: var(--ink);
+  font-weight: 600;
+  padding: 0 2rpx;
+  border-radius: 8rpx;
+}
+/* 正在念的这一句：黄底黑字，一眼就看见 */
+.seg.is-cur {
+  background: var(--highlight);
+  color: #000;
+}
+
+.reader__empty {
+  padding: 60rpx 20rpx;
+  text-align: center;
+  color: var(--ink-2);
+}
+.reader__empty-ico {
+  display: block;
+  width: 120rpx;
+  height: 120rpx;
+  margin: 0 auto 20rpx;
+}
+.reader__empty-t {
+  display: block;
+  font-size: 30rpx;
+  font-weight: 700;
+  line-height: 1.9;
+  color: var(--ink-2);
+}
+
+/* ============ 控制区 ============ */
+/* 底部留白加安全区：全面屏机型的系统手势条（iPhone 约 34pt）会浮在内容上，
+   不加这段，「念给我听」「听一遍怎么用」会被压住一截。
+   constant() 兼容 iOS 11.0~11.1，顺序必须 constant 在前、env 在后 */
+.ctrl {
+  flex: none;
+  padding: 16rpx 24rpx 40rpx;
+  padding-bottom: calc(40rpx + constant(safe-area-inset-bottom));
+  padding-bottom: calc(40rpx + env(safe-area-inset-bottom));
+  background: var(--card);
+  border-top: 3rpx solid var(--line);
+}
+
+/* 大圆按钮：直径 240rpx */
+.main {
+  width: 240rpx;
+  height: 240rpx;
+  margin: 0 auto 20rpx;
+  border-radius: 50%;
+  background: var(--go);
+  border: 8rpx solid var(--go-dark);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+}
+/* 去掉 scale 缩放。大圆按钮缩 4% 在真机上是「整屏跟着晃」，
+   老人看着晕。改成背景加深 + 边框加深，反馈一样明确但不位移 */
+.main--hover { background: var(--go-dark); border-color: #0D4A18; }
+.main--hover-stop { background: var(--stop-dark); border-color: #6E1212; }
+
+/* 真机实测：button:not([size='mini']) 的默认 184px 宽度优先级(0,1,1)高于单类名，
+   会把 .main 的 240rpx 宽度顶掉，圆按钮变成椭圆。用 .page .main 提到 0,2,0 压回去 */
+.page .main {
+  width: 240rpx;
+  height: 240rpx;
+  padding: 0;
+  box-sizing: border-box;
+  line-height: 1.2;
+}
+.main.is-stop {
+  background: var(--stop);
+  border-color: var(--stop-dark);
+}
+.main__ico {
+  width: 96rpx;
+  height: 96rpx;
+}
+.main__t {
+  margin-top: 8rpx;
+  font-size: 36rpx;
+  font-weight: 800;
+}
+
+.ctrl__row {
+  display: flex;
+  margin-top: 16rpx;
+}
+.ctrl__row .btn { flex: 1; }
+.ctrl__row .btn + .btn { margin-left: 14rpx; }
+
+.subbtn {
+  font-size: 30rpx;
+  min-height: 88rpx;
+}
+/* 没在念时的弱化态：用颜色区分，不用 disabled。
+   disabled 点了毫无反应，老人会以为机器坏了 —— 弱化态仍然能点，点了会语音提醒 */
+.subbtn.is-off {
+  color: var(--ink-2);
+  border-color: #BDB6A6;
+  background: #F7F3EA;
+}
+.subbtn.is-off .btn__icon {
+  opacity: .5;
+}
+.entry {
+  font-size: 30rpx;
+  min-height: 100rpx;
+  flex-direction: column;
+}
+.entry .btn__icon {
+  width: 56rpx;
+  height: 56rpx;
+  margin: 0 0 6rpx;
+}
+.entry.is-rec {
+  background: var(--stop);
+  border-color: var(--stop-dark);
+  color: #FFFFFF;
+}
+
+/* 语速 */
+.speed {
+  align-items: center;
+  margin-top: 20rpx;
+}
+.speed__lab {
+  flex: none;
+  font-size: 28rpx;
+  font-weight: 700;
+  color: var(--ink-2);
+  margin-right: 14rpx;
+}
+.speedbtn {
+  font-size: 30rpx;
+  min-height: 88rpx;
+  flex-direction: column;
+}
+.speedbtn.is-on {
+  background: var(--accent);
+  border-color: #0D47A1;
+  color: #FFFFFF;
+}
+
+/* ============ 新手引导（遮罩高亮真实按钮） ============ */
+/* 全屏遮罩：高亮圈用超大 box-shadow 涂暗四周，比拼 4 块半透明 view 更省、更准 */
+.coach {
+  position: fixed;
+  left: 0; top: 0; right: 0; bottom: 0;
+  z-index: 2000;
+}
+.coach__ring {
+  position: fixed;
+  border-radius: 24rpx;
+  border: 4rpx solid #7BD8C0;
+  box-sizing: content-box;
+  box-shadow: 0 0 0 3000px rgba(12, 32, 27, 0.66);
+}
+.coach__tip {
+  position: fixed;
+  background: #FFFFFF;
+  border-radius: 24rpx;
+  padding: 26rpx 28rpx;
+  box-shadow: 0 10rpx 34rpx rgba(0, 0, 0, 0.28);
+}
+.coach__t {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.4;
+}
+.coach__d {
+  margin-top: 10rpx;
+  font-size: 34rpx;
+  line-height: 1.7;
+  color: var(--ink-2);
+}
+.coach__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 24rpx;
+}
+.coach__skip {
+  font-size: 32rpx;
+  color: #98A2AE;
+  padding: 12rpx 10rpx;
+}
+.coach__next {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #FFFFFF;
+  background: var(--go);
+  border-radius: 999rpx;
+  padding: 16rpx 44rpx;
+}
